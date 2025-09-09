@@ -22,12 +22,12 @@ router.get('/', async (req, res) => {
         if (name) filter.name = { $regex: name, $options: 'i' };
         if (email) filter.email = { $regex: email, $options: 'i' };
         if (department) filter.department = { $regex: department, $options: 'i' };
-        if (salary) {
-            const salaryNum = Number(salary);
-            if (!isNaN(salaryNum)) {
-                filter.salary = salaryNum;
-            }
-        }
+        // if (salary) {
+        //     const salaryNum = Number(salary);
+        //     if (!isNaN(salaryNum)) {
+        //         filter.salary = salaryNum;
+        //     }
+        // }
 
 
         const [employees, total] = await Promise.all([

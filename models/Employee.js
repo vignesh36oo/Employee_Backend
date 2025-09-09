@@ -20,6 +20,9 @@ const employeeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Decimal128, 
         required: true
      }
-}, { timestamps: true });
+
+}, {
+    timestamps: true
+});
 
 module.exports = mongoose.model('Employee', employeeSchema);
