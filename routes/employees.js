@@ -7,6 +7,7 @@ const {
     updateEmployeeValidator,
     idValidator
 } = require('../validators/employeeValidator');
+const mongoose = require('mongoose');
 
 
 router.get('/', async (req, res) => {
