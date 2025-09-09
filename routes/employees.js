@@ -8,51 +8,23 @@ const {
     idValidator
 } = require('../validators/employeeValidator');
 
-// GET all employees
-// router.get('/', async (req, res) => {
-//     try {
-//         const page = parseInt(req.query.page) || 1;
-//         const limit = parseInt(req.query.limit) || 10;
-//         const skip = (page - 1) * limit;
-
-//         const [employees, total] = await Promise.all([
-//             Employee.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
-//             Employee.countDocuments()
-//         ]);
-
-//         res.json({
-//             success: true,
-//             result: employees,
-//             total,
-//             page,
-//             pages: Math.ceil(total / limit),
-//             message: "Employees retrieved successfully"
-//         });
-//     } catch (err) {
-//         res.status(500).json({ success: false, result: null, message: err.message });
-//     }
-// });
 
 router.get('/', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-
-        // Extract filters from query params
         const { name = '', email = '', department = '', salary = '' } = req.query;
         console.log(salary, "salarysalary");
 
-        // Build dynamic filter object
         const filter = {};
         if (name) filter.name = { $regex: name, $options: 'i' };
         if (email) filter.email = { $regex: email, $options: 'i' };
         if (department) filter.department = { $regex: department, $options: 'i' };
-        // if (salary) filter.salary = { $regex: salary, $options: 'i' }; // optional: use exact match or range
         if (salary) {
             const salaryNum = Number(salary);
             if (!isNaN(salaryNum)) {
-                filter.salary = Number(salary);
+                filter.salary = salaryNum;
             }
         }
 
@@ -98,7 +70,12 @@ router.post('/', createEmployeeValidator, validate, async (req, res) => {
             return res.status(400).json({ success: false, result: null, message: "Email already exists" });
         }
 
-        const newEmployee = new Employee(req.body);
+        let employeeData ={
+            ...req.body,
+            salary: mongoose.Types.Decimal128.fromString(req.body.salary.toString())
+        }
+
+        const newEmployee = new Employee(employeeData);
         await newEmployee.save();
         res.status(200).json({ success: true, result: newEmployee, message: "Employee created successfully" });
     } catch (err) {
